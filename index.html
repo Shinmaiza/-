@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมทายคำศัพท์</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            transition: background-color 0.5s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 400px;
+            text-align: center;
+        }
+        .card.correct {
+            transform: scale(1.1);
+            background: #d4edda;
+        }
+        .card.wrong {
+            transform: scale(0.9);
+            background: #f8d7da;
+        }
+        .button-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            width: 100%;
+            margin-top: 15px;
+        }
+        .button {
+            background: blue;
+            color: white;
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+        }
+        .button:hover {
+            transform: scale(1.1);
+        }
+        .button.correct {
+            background: green;
+        }
+        .button.wrong {
+            background: red;
+        }
+        .feedback {
+            margin-top: 10px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        h2 {
+            font-size: 28px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card" id="card-container">
+        <h2 id="word-meaning">Loading...</h2>
+        <div class="button-container" id="options"></div>
+        <p id="feedback" class="feedback"></p>
+        <p id="score">Score: 0</p>
+    </div>
+    
+    <script>
+        const words = [
+            { word: "apple", meaning: "แอปเปิ้ล 🍎", options: ["apple", "orange", "grape", "banana"], bg: "#FFEBEE" },
+            { word: "banana", meaning: "กล้วย 🍌", options: ["apple", "banana", "cherry", "pear"], bg: "#FFF9C4" },
+            { word: "cat", meaning: "แมว 🐱", options: ["dog", "cat", "fish", "bird"], bg: "#E3F2FD" },
+            { word: "dog", meaning: "สุนัข 🐶", options: ["elephant", "cat", "dog", "lion"], bg: "#D7CCC8" },
+            { word: "elephant", meaning: "ช้าง 🐘", options: ["giraffe", "elephant", "tiger", "rabbit"], bg: "#E8F5E9" },
+            { word: "grape", meaning: "องุ่น 🍇", options: ["apple", "banana", "grape", "orange"], bg: "#F3E5F5" },
+            { word: "tiger", meaning: "เสือ 🐯", options: ["lion", "elephant", "tiger", "rabbit"], bg: "#FFCCBC" },
+            { word: "rabbit", meaning: "กระต่าย 🐰", options: ["dog", "cat", "rabbit", "fox"], bg: "#DCEDC8" }
+        ];
+
+        let currentIndex = 0;
+        let score = 0;
+        
+        function loadQuestion() {
+            document.body.style.backgroundColor = words[currentIndex].bg;
+            document.getElementById("word-meaning").innerHTML = "คำศัพท์: " + words[currentIndex].meaning;
+            document.getElementById("options").innerHTML = "";
+            document.getElementById("card-container").className = "card";
+            words[currentIndex].options.forEach(option => {
+                const btn = document.createElement("button");
+                btn.innerText = option;
+                btn.className = "button";
+                btn.onclick = () => checkAnswer(btn, option);
+                document.getElementById("options").appendChild(btn);
+            });
+        }
+
+        function checkAnswer(button, answer) {
+            const feedback = document.getElementById("feedback");
+            const card = document.getElementById("card-container");
+            if (answer === words[currentIndex].word) {
+                score++;
+                feedback.innerText = "✅ ถูกต้อง!";
+                feedback.style.color = "green";
+                button.classList.add("correct");
+                card.classList.add("correct");
+            } else {
+                feedback.innerText = "❌ ผิด คำตอบที่ถูกคือ " + words[currentIndex].word;
+                feedback.style.color = "red";
+                button.classList.add("wrong");
+                card.classList.add("wrong");
+            }
+            document.getElementById("score").innerText = `Score: ${score}`;
+            setTimeout(nextQuestion, 1500);
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex < words.length) {
+                loadQuestion();
+                document.getElementById("feedback").innerText = "";
+            } else {
+                alert(`เกมจบแล้ว! คะแนนของคุณคือ ${score}/${words.length}`);
+                currentIndex = 0;
+                score = 0;
+                loadQuestion();
+            }
+        }
+        
+        loadQuestion();
+    </script>
+</body>
+</html>
